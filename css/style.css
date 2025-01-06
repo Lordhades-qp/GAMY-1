@@ -1,0 +1,59 @@
+/* Style global */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #202020;
+    color: white;
+}
+
+/* Barre de vie */
+#health-bar-container {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 200px;
+    height: 20px;
+    background: #333;
+    border: 2px solid #fff;
+    border-radius: 5px;
+}
+
+#health-bar {
+    width: 100%;
+    height: 100%;
+    background: red;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+/* Tableau de bord */
+#dashboard {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    z-index: 10;
+}
+
+#dashboard button {
+    padding: 10px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+/* Conteneur des histoires */
+#story-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+    width: 80%;
+    color: white;
+}
