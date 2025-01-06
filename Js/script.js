@@ -39,6 +39,9 @@ const levels = [
 const startButton = document.getElementById("start");
 const shopButton = document.getElementById("shop");
 const changePlayerButton = document.getElementById("change-player");
+const settingsButton = document.getElementById('settings').addEventListener('click', openSettings);
+const creditsButton= document.getElementById('credits').addEventListener('click', () => {
+        window.location.href = 'credits.html';
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 canvas.width = 800;
