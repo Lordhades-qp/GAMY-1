@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMY-1</title>
+    <title>Jeu d'Aventure</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div id="game-container">
-        <!-- Zone de jeu -->
+        <!-- Barre de vie -->
+        <div id="health-bar-container">
+            <div id="health-bar"></div>
+        </div>
+
+        <!-- Canvas pour le jeu -->
         <canvas id="game-canvas"></canvas>
 
         <!-- Tableau de bord -->
@@ -18,7 +23,7 @@
             <button id="start-game-btn">Commencer</button>
         </div>
 
-        <!-- Zone des histoires -->
+        <!-- Conteneur pour les histoires -->
         <div id="story-container" style="display: none;">
             <h2 id="story-title"></h2>
             <p id="story-content"></p>
@@ -27,4 +32,4 @@
     </div>
     <script src="js/script.js"></script>
 </body>
-  </html>
+                </html>
