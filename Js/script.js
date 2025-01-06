@@ -1,61 +1,133 @@
-let heroHealth = 100; // Points de vie initiaux
-const maxHealth = 100; // Points de vie maximum
-let currentLevel = 1;
+ick", () => {
+    startLevel(currentLevel);
+});
+// VARIABLES GLOBALES
+let currentPlayer = "personnage"; // Joueur actuellement sélectionné
+let points = 0; // Points du joueur
+let level = 1; // Niveau actuel
+let unlockedPlayers = ["personnage"]; // Joueurs débloqués
+let heroHealth = 100; // Points de vie du héros
+let boss = null; // Boss actuel
+let monsters = []; // Liste des monstres
+let gameRunning = false; // État du jeu
 
-// Mise à jour de la barre de vie
-function updateHealthBar() {
-    const healthBar = document.getElementById("health-bar");
-    healthBar.style.width = (heroHealth / maxHealth) * 100 + "%";
-}
+// CONFIGURATION DES JOUEURS
+const players = [
+    { name: "personnage", cost: 0, power: 1 },
+    { name: "YAM", cost: 100, power: 2 },
+    { name: "GÉGÉ", cost: 200, power: 3 },
+    { name: "KALISTA", cost: 300, power: 4 },
+    { name: "CHAKA", cost: 400, power: 5 },
+    { name: "DONEL", cost: 500, power: 6 },
+    { name: "PLAVIS", cost: 600, power: 7 },
+    { name: "RINMA", cost: 700, power: 8 },
+    { name: "HOMA", cost: 800, power: 9 },
+    { name: "ANITA", cost: 900, power: 10 },
+    { name: "GATUZO CHIRIKAZOLA", cost: 1000, power: 15 },
+];
 
-// Réduire les points de vie du héros
-function takeDamage(damage) {
-    heroHealth -= damage;
-    if (heroHealth < 0) heroHealth = 0;
-    updateHealthBar();
+// CONFIGURATION DES NIVEAUX
+const levels = [
+    { level: 1, monsters: 5, boss: null },
+    { level: 5, monsters: 10, boss: "dragon" },
+    { level: 10, monsters: 15, boss: "dragon" },
+    { level: 15, monsters: 20, boss: "dragon" },
+    { level: 99, monsters: 50, boss: ["dragon", "dragon", "dragon", "dragon", "dragon"] },
+];
 
-    if (heroHealth === 0) {
-        gameOver();
+// DOM ELEMENTS
+const startButton = document.getElementById("start");
+const shopButton = document.getElementById("shop");
+const changePlayerButton = document.getElementById("change-player");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = 800;
+canvas.height = 600;
+
+// CHARGEMENT DU JEU
+function loadGameData() {
+    const savedData = localStorage.getItem("gameData");
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        points = data.points;
+        unlockedPlayers = data.unlockedPlayers;
+        level = data.level;
     }
 }
 
-// Restaurer des points de vie avec des potions
-function heal(amount) {
-    heroHealth += amount;
-    if (heroHealth > maxHealth) heroHealth = maxHealth;
-    updateHealthBar();
+// SAUVEGARDE DU JEU
+function saveGameData() {
+    const data = {
+        points: points,
+        unlockedPlayers: unlockedPlayers,
+        level: level,
+    };
+    localStorage.setItem("gameData", JSON.stringify(data));
 }
 
-// Afficher un écran Game Over
-function gameOver() {
-    alert("Game Over ! Vous avez perdu.");
-    heroHealth = maxHealth;
-    updateHealthBar();
+// COMMENCER LE JEU
+function startGame() {
+    gameRunning = true;
+    playLevel(level);
 }
 
-// Charger l’histoire d’un niveau
-async function loadStory(level) {
-    const response = await fetch(`assets/stories/story${level}.txt`);
-    const story = response.ok ? await response.text() : "Aucune histoire disponible.";
-    document.getElementById("story-title").innerText = `Niveau ${level}`;
-    document.getElementById("story-content").innerText = story;
-    document.getElementById("story-container").style.display = "block";
+// GESTION DES NIVEAUX
+function playLevel(level) {
+    const currentLevel = levels.find((lvl) => lvl.level === level);
+    monsters = [];
+    for (let i = 0; i < currentLevel.monsters; i++) {
+        monsters.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height });
+    }
+
+    if (currentLevel.boss) {
+        boss = { type: currentLevel.boss, health: 100 * level };
+    }
+
+    gameLoop();
 }
 
-// Commencer un niveau
-function startLevel(level) {
-    loadStory(level);
-    console.log(`Niveau ${level} commencé.`);
-    // Charger les monstres et l'arrière-plan ici
+// BOUCLE DE JEU
+function gameLoop() {
+    if (!gameRunning) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Dessiner les monstres
+    monsters.forEach((monster) => {
+        ctx.fillStyle = "red";
+        ctx.fillRect(monster.x, monster.y, 20, 20);
+    });
+
+    // Dessiner le boss
+    if (boss) {
+        ctx.fillStyle = "purple";
+        ctx.fillRect(canvas.width / 2 - 50, canvas.height / 2 - 50, 100, 100);
+    }
+
+    requestAnimationFrame(gameLoop);
 }
 
-// Gérer le clic sur "Continuer"
-document.getElementById("continue-game").addEventListener("click", () => {
-    document.getElementById("story-container").style.display = "none";
-    // Lancer le gameplay ici
-});
+// GESTION DES MONSTRES ET DU BOSS
+function defeatMonster(index) {
+    monsters.splice(index, 1);
+    points += 10;
+    if (monsters.length === 0 && (!boss || boss.health <= 0)) {
+        nextLevel();
+    }
+}
 
-// Gérer le clic sur "Commencer"
-document.getElementById("start-game-btn").addEventListener("click", () => {
-    startLevel(currentLevel);
-});
+function defeatBoss() {
+    boss = null;
+    points += 100;
+    nextLevel();
+}
+
+function nextLevel() {
+    level++;
+    if (level > 99) {
+        alert("Félicitations, vous avez terminé le jeu !");
+        gameRunning = false;
+    } else {
+        playLevel(level);
+    }
+    }
